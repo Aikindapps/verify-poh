@@ -1,0 +1,17 @@
+{
+  "canisters": {
+    "verify-poh-backend": {
+      "candid": "src/verify-poh-backend/verify-poh-backend.did",
+      "package": "verify-poh-backend",
+      "type": "rust"
+    }
+  },
+  "defaults": {
+    "build": {
+      "args": "",
+      "packtool": ""
+    }
+  },
+  "output_env_file": ".env",
+  "version": 1
+}

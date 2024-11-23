@@ -1,0 +1,5 @@
+[workspace]
+members = [
+    "src/verify-poh-backend"
+]
+resolver = "2"
