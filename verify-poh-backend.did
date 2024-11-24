@@ -1,0 +1,15 @@
+type Result = variant { Ok : UniquePersonProof; Err : text };
+type UniquePersonProof = record {
+  provider : UniquePersonProofProvider;
+  timestamp : nat64;
+};
+type UniquePersonProofProvider = variant { DecideAI };
+service : {
+  verify_proof_of_unique_personhood : (
+      principal,
+      principal,
+      text,
+      blob,
+      nat64,
+    ) -> (Result);
+}
