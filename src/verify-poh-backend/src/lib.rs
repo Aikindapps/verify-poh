@@ -37,6 +37,12 @@ pub fn verify_proof_of_unique_personhood(
 ) -> Result<UniquePersonProof, String> {
     let root_pk_raw = &IC_ROOT_KEY[IC_ROOT_KEY.len().saturating_sub(96)..];
 
+    let mut argument = HashMap::new();
+    argument.insert(
+        "minimumVerificationDate".to_string(),
+        ic_verifiable_credentials::issuer_api::ArgumentValue::String("2020-12-01T00:00:00Z".to_string()),
+    );
+
     match ic_verifiable_credentials::validate_ii_presentation_and_claims(
         &credential_jwt,
         principal,
@@ -49,7 +55,7 @@ pub fn verify_proof_of_unique_personhood(
         },
         &CredentialSpec {
             credential_type: "ProofOfUniqueness".to_string(),
-            arguments: None,
+            arguments: Some(argument),
         },
         root_pk_raw,
         (now * NANOS_PER_MILLISECOND) as u128,

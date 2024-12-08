@@ -3,7 +3,8 @@
     "verify-poh-backend": {
       "candid": "src/verify-poh-backend/verify-poh-backend.did",
       "package": "verify-poh-backend",
-      "type": "rust"
+      "type": "rust",
+      "specified_id": "l72yd-3qaaa-aaaai-aqj7a-cai"
     }
   },
   "defaults": {
