@@ -1,8 +1,11 @@
 use std::collections::HashMap;
 use candid::Principal;
 use ic_cdk_macros::query;
+use ic_cdk_macros::update;
 use ic_verifiable_credentials::issuer_api::CredentialSpec;
 use ic_verifiable_credentials::VcFlowSigners;
+use candid::Nat;
+use num_traits::cast::ToPrimitive;
 
 pub type CanisterId = Principal;
 pub type TimestampMillis = u64;
@@ -74,6 +77,26 @@ fn signing_canister_id() {
         ISSUER_CANISTER_ID,
         CanisterId::from_text("qgxyr-pyaaa-aaaah-qdcwq-cai").unwrap()
     );
+}
+
+#[allow(non_snake_case)]
+#[query]
+pub fn availableCycles() -> Nat {
+    let cycles: u64 = unsafe { ic0::msg_cycles_available() as u64 };
+    Nat::from(cycles)
+}
+
+#[allow(non_snake_case)]
+#[update]
+pub fn acceptCycles() -> () {
+    let availableCycles = availableCycles();
+
+    let availableCyclesu64: u64 = availableCycles.0.to_u64().expect("Nat is too large for u64");
+    let availableCyclesi64: i64 = availableCyclesu64
+        .try_into()
+        .expect("Available cycles exceed the range of i64");
+
+    unsafe { ic0::msg_cycles_accept(availableCyclesi64) as u64 };
 }
 
 ic_cdk::export_candid!();

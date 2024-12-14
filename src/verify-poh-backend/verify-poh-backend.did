@@ -5,6 +5,8 @@ type UniquePersonProof = record {
 };
 type UniquePersonProofProvider = variant { DecideAI };
 service : {
+  acceptCycles : () -> ();
+  availableCycles : () -> (nat) query;
   verify_proof_of_unique_personhood : (principal, text, text, nat64) -> (
       Result,
     ) query;

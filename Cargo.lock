@@ -2305,7 +2305,9 @@ dependencies = [
  "ic-cdk-macros 0.16.0",
  "ic-cdk-timers",
  "ic-verifiable-credentials",
+ "ic0 0.23.0",
  "ic_principal",
+ "num-traits",
  "serde",
 ]
 
