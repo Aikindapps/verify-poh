@@ -79,24 +79,20 @@ fn signing_canister_id() {
     );
 }
 
-#[allow(non_snake_case)]
-#[query]
-pub fn availableCycles() -> Nat {
-    let cycles: u64 = unsafe { ic0::msg_cycles_available() as u64 };
-    Nat::from(cycles)
+#[query(name = "availableCycles")]
+pub fn balance() -> candid::Nat {
+    return candid::Nat::from(ic_cdk::api::canister_balance128());
 }
 
-#[allow(non_snake_case)]
-#[update]
-pub fn acceptCycles() -> () {
-    let availableCycles = availableCycles();
+#[update(name = "acceptCycles")]
+pub fn receive() -> () {
+    let available = ic_cdk::api::call::msg_cycles_available128();
 
-    let availableCyclesu64: u64 = availableCycles.0.to_u64().expect("Nat is too large for u64");
-    let availableCyclesi64: i64 = availableCyclesu64
-        .try_into()
-        .expect("Available cycles exceed the range of i64");
-
-    unsafe { ic0::msg_cycles_accept(availableCyclesi64) as u64 };
+    if available == 0 {
+        return;
+    }
+    let accepted = ic_cdk::api::call::msg_cycles_accept128(available);
+    assert!(accepted == available);
 }
 
 ic_cdk::export_candid!();
