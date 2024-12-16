@@ -40,6 +40,13 @@ pub fn verify_proof_of_unique_personhood(
 ) -> Result<UniquePersonProof, String> {
     let root_pk_raw = &IC_ROOT_KEY[IC_ROOT_KEY.len().saturating_sub(96)..];
 
+    let mut using_effective_derivative_origin = "";
+    if (effective_derivation_origin == "https://nuance.xyz") {
+        using_effective_derivative_origin = "https://exwqn-uaaaa-aaaaf-qaeaa-cai.ic0.app";
+    } else {
+        using_effective_derivative_origin = &effective_derivation_origin;
+    }
+
     let mut argument = HashMap::new();
     argument.insert(
         "minimumVerificationDate".to_string(),
@@ -49,7 +56,7 @@ pub fn verify_proof_of_unique_personhood(
     match ic_verifiable_credentials::validate_ii_presentation_and_claims(
         &credential_jwt,
         principal,
-        effective_derivation_origin,
+        using_effective_derivative_origin.to_string(),
         &VcFlowSigners {
             ii_canister_id: II_CANISTER_ID,
             ii_origin: "https://identity.ic0.app/".to_string(),
