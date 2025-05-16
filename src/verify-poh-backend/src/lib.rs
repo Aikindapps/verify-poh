@@ -78,6 +78,60 @@ pub fn verify_proof_of_unique_personhood(
     }
 }
 
+pub fn verify_proof_of_unique_personhood_gold_status(
+    principal: Principal,
+    credential_jwt: String,
+    effective_derivation_origin: String,
+    now: TimestampMillis,
+) -> Result<UniquePersonProof, String> {
+    let root_pk_raw = &IC_ROOT_KEY[IC_ROOT_KEY.len().saturating_sub(96)..];
+
+    const MIN_VERIF_DATE_KEY: &str = "minimumVerificationDate";
+    const MIN_VERIF_DATE_VALUE: &str = "2020-12-01T00:00:00Z";
+    const MIN_REP_LEVEL_KEY: &str = "minimumReputationLevel";
+    const MIN_REP_LEVEL_VALUE: &str = "gold";
+
+    let arguments: HashMap<String, ic_verifiable_credentials::issuer_api::ArgumentValue> =
+        HashMap::from([
+            (
+                MIN_VERIF_DATE_KEY.to_owned(),
+                ic_verifiable_credentials::issuer_api::ArgumentValue::String(
+                    MIN_VERIF_DATE_VALUE.to_owned(),
+                ),
+            ),
+            (
+                MIN_REP_LEVEL_KEY.to_owned(),
+                ic_verifiable_credentials::issuer_api::ArgumentValue::String(
+                    MIN_REP_LEVEL_VALUE.to_owned(),
+                ),
+            ),
+        ]);
+
+    match ic_verifiable_credentials::validate_ii_presentation_and_claims(
+        &credential_jwt,
+        principal,
+        effective_derivation_origin,
+        &VcFlowSigners {
+            ii_canister_id: II_CANISTER_ID,
+            ii_origin: "https://identity.ic0.app/".to_string(),
+            issuer_canister_id: ISSUER_CANISTER_ID,
+            issuer_origin: ISSUER_ORIGIN.to_string(),
+        },
+        &CredentialSpec {
+            credential_type: "ProofOfUniqueness".to_string(),
+            arguments: Some(arguments),
+        },
+        root_pk_raw,
+        (now * NANOS_PER_MILLISECOND) as u128,
+    ) {
+        Ok(_) => Ok(UniquePersonProof {
+            timestamp: now,
+            provider: UniquePersonProofProvider::DecideAI,
+        }),
+        Err(error) => Err(format!("{error:?}")),
+    }
+}
+
 #[test]
 fn signing_canister_id() {
     assert_eq!(
