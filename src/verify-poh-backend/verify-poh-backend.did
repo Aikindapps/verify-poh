@@ -10,4 +10,7 @@ service : {
   verify_proof_of_unique_personhood : (principal, text, text, nat64) -> (
       Result,
     ) query;
+  verify_proof_of_unique_personhood_gold_status : (principal, text, text, nat64) -> (
+      Result,
+    ) query;
 }
