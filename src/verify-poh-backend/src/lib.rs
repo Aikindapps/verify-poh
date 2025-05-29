@@ -78,6 +78,7 @@ pub fn verify_proof_of_unique_personhood(
     }
 }
 
+#[query]
 pub fn verify_proof_of_unique_personhood_gold_status(
     principal: Principal,
     credential_jwt: String,
